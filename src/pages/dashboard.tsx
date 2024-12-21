@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { ScoreDisplay } from '@/components/game/ScoreDisplay';
 import { Leaderboard } from '@/components/game/Leaderboard';
 import { WeeklyChallenges } from '@/components/game/WeeklyChallenges';
-
+console.log("Welcome");
 export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50 pt-20">
@@ -18,7 +18,6 @@ export default function DashboardPage() {
 
         <div className="space-y-8">
           <ScoreDisplay />
-          
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <WeeklyChallenges />
             <Leaderboard />

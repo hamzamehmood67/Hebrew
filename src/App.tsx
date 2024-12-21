@@ -23,6 +23,7 @@ import PrivacyPage from './pages/privacy';
 import ReadingPage from './pages/reading';
 import StoryPage from './pages/reading/[id]';
 import { useAuthStore } from './store/authStore';
+import DashboardPage from './pages/dashboard';
 
 function App() {
   const { logout } = useAuthStore();
@@ -42,6 +43,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/courses" element={<CoursesPage />} />
             <Route path="/practice" element={<PracticePage />} />
             <Route path="/community" element={<CommunityPage />} />
