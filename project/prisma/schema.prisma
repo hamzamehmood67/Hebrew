@@ -1,0 +1,116 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String           @id @default(uuid())
+  email           String           @unique
+  password        String
+  name            String
+  level           String           @default("beginner")
+  xp              Int              @default(0)
+  streak          Int              @default(0)
+  lastActivity    DateTime?
+  practiceResults PracticeResult[]
+  storyProgress   StoryProgress[]
+  achievements    Achievement[]
+  goals           Goal[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model Story {
+  id          String          @id @default(uuid())
+  title       String
+  content     String
+  translation String
+  level       String
+  points      Int            @default(10)
+  progress    StoryProgress[]
+  vocabulary  Vocabulary[]
+  questions   Question[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model StoryProgress {
+  id                String   @id @default(uuid())
+  userId           String
+  storyId          String
+  completed        Boolean  @default(false)
+  score            Int?
+  timeSpent        Int?     // in seconds
+  attemptsCount    Int      @default(0)
+  lastAttemptDate  DateTime @default(now())
+  bonusCompleted   Boolean  @default(false)
+  mistakesMade     String[] // store question IDs
+  readWithoutTranslation Boolean @default(false)
+  user             User     @relation(fields: [userId], references: [id])
+  story            Story    @relation(fields: [storyId], references: [id])
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([userId, storyId])
+}
+
+model Vocabulary {
+  id              String   @id @default(uuid())
+  word            String
+  translation     String
+  transliteration String
+  storyId         String
+  story           Story    @relation(fields: [storyId], references: [id])
+}
+
+model Question {
+  id              String   @id @default(uuid())
+  storyId         String
+  question        String
+  options         String[] // JSON array of options
+  correctAnswer   String
+  explanation     String?
+  points          Int      @default(10)
+  story           Story    @relation(fields: [storyId], references: [id])
+}
+
+model Achievement {
+  id          String   @id @default(uuid())
+  userId      String
+  type        String   // e.g., "streak", "perfect_score", "stories_completed"
+  name        String
+  description String
+  unlockedAt  DateTime @default(now())
+  xpReward    Int
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model Goal {
+  id          String   @id @default(uuid())
+  userId      String
+  type        String   // e.g., "daily_xp", "stories_completed", "practice_time"
+  target      Int
+  progress    Int      @default(0)
+  completed   Boolean  @default(false)
+  startDate   DateTime @default(now())
+  endDate     DateTime
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model PracticeResult {
+  id          String   @id @default(uuid())
+  userId      String
+  type        String   // "speaking", "writing", "reading", "conversation"
+  score       Int
+  timeSpent   Int      // in seconds
+  mistakes    String[] // store specific mistakes made
+  feedback    String?
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+}

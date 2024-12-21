@@ -1,0 +1,77 @@
+// This is your Prisma schema file
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String          @id @default(uuid())
+  email         String         @unique
+  password      String
+  name          String
+  level         String         @default("beginner")
+  xp            Int            @default(0)
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  storyProgress StoryProgress[]
+
+  @@map("users")
+}
+
+model Story {
+  id            String          @id @default(uuid())
+  title         String
+  content       String
+  translation   String
+  level         String
+  points        Int            @default(10)
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  vocabulary    Vocabulary[]
+  questions     Question[]
+  progress      StoryProgress[]
+
+  @@map("stories")
+}
+
+model Question {
+  id            String   @id @default(uuid())
+  text          String
+  translation   String
+  options       String[]
+  correctAnswer Int
+  storyId       String   @map("story_id")
+  story         Story    @relation(fields: [storyId], references: [id])
+
+  @@map("questions")
+}
+
+model Vocabulary {
+  id             String  @id @default(uuid())
+  word           String
+  translation    String
+  transliteration String
+  storyId        String? @map("story_id")
+  story          Story?  @relation(fields: [storyId], references: [id])
+
+  @@map("vocabulary")
+}
+
+model StoryProgress {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  storyId   String   @map("story_id")
+  completed Boolean  @default(false)
+  score     Int?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  user      User     @relation(fields: [userId], references: [id])
+  story     Story    @relation(fields: [storyId], references: [id])
+
+  @@unique([userId, storyId])
+  @@map("story_progress")
+}

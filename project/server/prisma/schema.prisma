@@ -1,0 +1,66 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  password     String
+  name         String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  progress     Progress[]
+  achievements Achievement[]
+}
+
+model Progress {
+  id        String   @id @default(uuid())
+  userId    String
+  lessonId  String
+  score     Int      @default(0)
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Achievement {
+  id          String   @id @default(uuid())
+  userId      String
+  name        String
+  description String
+  unlockedAt  DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model Story {
+  id          String       @id @default(uuid())
+  title       String
+  content     String
+  level       String
+  questions   Question[]
+  vocabulary  Vocabulary[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Question {
+  id       String   @id @default(uuid())
+  storyId  String
+  question String
+  answer   String
+  story    Story    @relation(fields: [storyId], references: [id])
+}
+
+model Vocabulary {
+  id          String @id @default(uuid())
+  storyId     String
+  word        String
+  translation String
+  story       Story  @relation(fields: [storyId], references: [id])
+}
