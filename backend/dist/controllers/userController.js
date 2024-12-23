@@ -1,4 +1,15 @@
 "use strict";
+// import { Request, Response } from 'express';
+// import { z } from 'zod';
+// const bcrypt = require('bcrypt');
+// const jwt = require('jsonwebtoken');
+// import {
+//     findUserByEmail,
+//     createUser,
+//     findUserById,
+//     updateUser,
+//     deleteUser,
+// } from '../models/userModel';
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,7 +46,14 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (existingUser)
             return res.status(400).json({ message: 'User already exists' });
         const hashedPassword = yield bcrypt.hash(password, 10);
-        const user = yield (0, userModel_1.createUser)({ name, email, password: hashedPassword });
+        const user = yield (0, userModel_1.createUser)({
+            name,
+            email,
+            password: hashedPassword,
+            level: "beginner", // Default level
+            role: "user", // Default role
+            subscription: "free", // Default subscription
+        });
         const token = jwt.sign({ userId: user.id }, JWT_SECRET);
         return res.status(200).json({ message: 'User created successfully', token });
     }
@@ -86,7 +104,7 @@ exports.getProfile = getProfile;
 const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userId = req.user.userId;
-        const { name, email, password } = req.body;
+        const { name, email, password, level, role, subscription } = req.body;
         const dataToUpdate = {};
         if (name)
             dataToUpdate.name = name;
@@ -94,6 +112,12 @@ const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             dataToUpdate.email = email;
         if (password)
             dataToUpdate.password = yield bcrypt.hash(password, 10);
+        if (level)
+            dataToUpdate.level = level;
+        if (role)
+            dataToUpdate.role = role;
+        if (subscription)
+            dataToUpdate.subscription = subscription;
         const updatedUser = yield (0, userModel_1.updateUser)(userId, dataToUpdate);
         return res.status(200).json({ message: 'User updated successfully', user: updatedUser });
     }

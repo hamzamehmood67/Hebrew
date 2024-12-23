@@ -27,6 +27,10 @@ const findUserById = (id) => __awaiter(void 0, void 0, void 0, function* () {
             id: true,
             name: true,
             email: true,
+            level: true,
+            role: true,
+            subscription: true,
+            xp: true,
         },
     });
 });

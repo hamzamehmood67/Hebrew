@@ -13,13 +13,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// User schema
 model User {
-  id       String @id @default(uuid())
-  name     String
-  email    String @unique
-  password String 
+  id            String          @id @default(uuid())
+  email         String          @unique
+  password      String
+  name          String
+  level         String          @default("beginner")
+  xp            Int             @default(0)
+  role          String          @default("user") 
+  subscription  String          @default("free") 
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+  @@map("users")
 }
-// schema.prisma
-
 
 
