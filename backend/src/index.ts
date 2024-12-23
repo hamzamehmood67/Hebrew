@@ -1,7 +1,7 @@
 import express from 'express';
 require('dotenv').config();
 import { PrismaClient } from '@prisma/client';
-import userRoutes from './routes/user';
+import userRoutes from './routes/userRoutes';
 const cors = require('cors');
 
 const app = express();
@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-app.get('/', (req, res) => {
+app.get('/', (req: any, res: any) => {
     res.send('Hello World!');
 });
 
